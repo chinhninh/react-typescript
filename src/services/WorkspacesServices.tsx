@@ -7,11 +7,15 @@ const WorkspacesCreate = (body: WokspaceData) => {
   return http.post<WokspaceData>("workspaces", body);
 };
 const WorkspacesSelect = (id: string) => {
-  return http.post<WokspaceData>(`workspaces/${id}/select`, {});
+  return http.post(`workspaces/${id}/select`, {});
+};
+const WorkspacesApplicationList = (id: string) => {
+  return http.get(`workspaces/${id}/applications`);
 };
 const WorkspacesServices = {
   Workspaces,
   WorkspacesCreate,
-  WorkspacesSelect
+  WorkspacesSelect,
+  WorkspacesApplicationList,
 };
 export default WorkspacesServices;

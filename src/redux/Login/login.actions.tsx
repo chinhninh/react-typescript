@@ -1,6 +1,6 @@
 import { LOGIN_START, LOGIN_FAIL, LOGIN_SUCCESS } from "./login.types";
 
-import LoginServices from "../../services/Login";
+import LoginServices from "../../services/LoginServices";
 
 import LoginData from "../../interface/Login";
 

@@ -6,10 +6,13 @@ import loginReducer from "./Login/login.reducer"
 
 import workspacesReducer from "./Workspaces/workspaces.reducer"
 
+import storesReducer from "./Stores/stores.reducer"
+
 const rootReducer = combineReducers({
   counter: counterReducer,
   loginReducer,
-  workspacesReducer
+  workspacesReducer,
+  storesReducer,
 });
 
 export default rootReducer;

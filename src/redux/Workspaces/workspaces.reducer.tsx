@@ -1,4 +1,4 @@
-import { WORKSPACE_START, WORKSPACE_FAIL, WORKSPACE_SUCCESS, WORKSPACE_CREATE_START, WORKSPACE_CREATE_FAIL, WORKSPACE_CREATE_SUCCESS } from "./workspaces.types";
+import { WORKSPACE_START, WORKSPACE_FAIL, WORKSPACE_SUCCESS, WORKSPACE_CREATE_START, WORKSPACE_CREATE_FAIL, WORKSPACE_CREATE_SUCCESS, WORKSPACE_APPLICATION_FAIL, WORKSPACE_APPLICATION_SUCCESS, WORKSPACE_APPLICATION_START } from "./workspaces.types";
 
 const INITIAL_STATE = {
   loading: false,
@@ -7,6 +7,9 @@ const INITIAL_STATE = {
   loadingCreate: false,
   dataCreate: null,
   errorCreate: null,
+  loadingApplication: false,
+  dataApplication: [],
+  errorApplication: null,
 };
 
 const reducer = (state = INITIAL_STATE, action: any) => {
@@ -55,6 +58,29 @@ const reducer = (state = INITIAL_STATE, action: any) => {
         loadingCreate: false,
         dataCreate: null,
         errorCreate: action.payload,
+      };
+
+      //application
+
+      case WORKSPACE_APPLICATION_START:
+      return {
+        ...state,
+        loadingApplication: true,
+      };
+
+    case WORKSPACE_APPLICATION_SUCCESS:
+      return {
+        ...state,
+        loadingApplication: false,
+        dataApplication: action?.payload,
+      };
+
+    case WORKSPACE_APPLICATION_FAIL:
+      return {
+        ...state,
+        loadingApplication: false,
+        dataApplication: [],
+        errorApplication: action.payload,
       };
 
     default:

@@ -11,9 +11,9 @@ import { BrowserRouter } from "react-router-dom";
 import store from "./redux/store";
 
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider store={store} >
     <React.StrictMode>
-      <BrowserRouter>
+      <BrowserRouter >
         <App />
       </BrowserRouter>
     </React.StrictMode>

@@ -58,13 +58,14 @@ const MenuLayout = ({ arrRouter, collapsed }: any) => {
           return e.subMenu.length ? (
             <SubMenu key={e.key} icon={<MailOutlined />} title={e.title}>
               {e.subMenu.map((k: any, i: number) => (
+                k.isMenu &&
                 <Menu.Item key={k.key}>
                   <Link to={k.path}>{k.title}</Link>
                 </Menu.Item>
               ))}
             </SubMenu>
           ) : (
-            <Menu.Item key={e.key} icon={<PieChartOutlined />}>
+            e.isMenu && <Menu.Item key={e.key} icon={<PieChartOutlined />}>
               <Link to={e.path}>{e.title}</Link>
             </Menu.Item>
           );
