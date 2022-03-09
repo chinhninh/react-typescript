@@ -17,6 +17,7 @@ const Workspaces = () => {
   const loading = useSelector<RootState>(
     (state) => state.workspacesReducer?.loading
   ) as any;
+
   useEffect(() => {
     dispatch(actionGetDataWorkspace());
   }, []);

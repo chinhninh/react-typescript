@@ -18,11 +18,28 @@ const MenuLayout = ({ arrRouter, collapsed }: any) => {
   useEffect(() => {
     const arrPath = location.pathname.split("/");
     const total = (arrPath || []).length;
-    if (total === 2) {
+    // if (total === 2) {
+    //   setSelectedKey(arrPath[1]);
+    //   setOpenKey("")
+    //   setDefaultOpenKey("")
+    // } else if (total > 2) {
+    //   setSelectedKey(arrPath[2]);
+    //   setDefaultOpenKey(arrPath[1])
+    //   setOpenKey(arrPath[1])
+    // } else {
+    //   setSelectedKey("");
+    //   setDefaultOpenKey("")
+    //   setOpenKey("")
+    // }
+    let findDataRouter = []
+    if(total > 1){
+      findDataRouter = (arrRouter || []).filter((e: any) => e.path === arrPath[1])
+    }
+    if (total > 1 && findDataRouter[0].subMenu.length === 0 ) {
       setSelectedKey(arrPath[1]);
       setOpenKey("")
       setDefaultOpenKey("")
-    } else if (total > 2) {
+    } else if (total > 2 && findDataRouter[0].subMenu.length > 0) {
       setSelectedKey(arrPath[2]);
       setDefaultOpenKey(arrPath[1])
       setOpenKey(arrPath[1])
@@ -30,7 +47,7 @@ const MenuLayout = ({ arrRouter, collapsed }: any) => {
       setSelectedKey("");
       setDefaultOpenKey("")
       setOpenKey("")
-    }
+    } 
   }, [location]);
 
   let onOpenChangeMenu = (e: any) => {

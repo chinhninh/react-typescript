@@ -8,6 +8,7 @@ const fetchClient = () => {
     method: 'get',
     headers: {
       'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
     },
   } as any
 
