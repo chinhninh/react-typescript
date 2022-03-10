@@ -73,6 +73,7 @@ const reducer = (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         loadingList: true,
+        dataList: [],
       };
 
     case STORES_LIST_SUCCESS:

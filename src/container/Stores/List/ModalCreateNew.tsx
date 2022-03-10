@@ -2,20 +2,26 @@ import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { max6, requiredItem } from "../../../props/validation";
-import { actionCreateNewItem, actionUpdateItem } from "../../../redux/Stores/stores.actions";
+import {
+  actionCreateNewItem,
+  actionUpdateItem,
+} from "../../../redux/Stores/stores.actions";
 import { RootState } from "../../../redux/store";
+import moment from 'moment';
 
 const { Option } = Select;
 
+const dateFormat = 'YYYY/MM/DD';
 interface paramCreateNewItem {
   dataField: any;
   appId: string;
   storeId: string;
   handleGetListStore: () => void;
   operation: string;
-  dataItem: any,
-  itemId: string,
-  rev_no: string
+  dataItem: any;
+  itemId: string;
+  rev_no: string;
+  fieldIdDateTime: string;
 }
 
 const CreateNewItemStore = ({
@@ -26,13 +32,13 @@ const CreateNewItemStore = ({
   operation,
   dataItem,
   itemId,
-  rev_no
+  rev_no,
+  fieldIdDateTime
 }: paramCreateNewItem) => {
   const dispatch = useDispatch();
 
   let newDataField = (Object.values(dataField || {}) || []).filter(
-    (e: any) => e.dataType === "text" || e.dataType === "select" 
-    // || e.dataType === "datetime"
+    (e: any) => e.dataType === "text" || e.dataType === "select" || e.dataType === "datetime"
   ) as any;
 
   let defaultDataFormDataField = {} as any;
@@ -49,6 +55,7 @@ const CreateNewItemStore = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [defaultData, setDefaultData] = useState({});
+  // console.log('defaultData: ',defaultData)
 
   const loading = useSelector<RootState>(
     (state) => state.storesReducer?.loadingCreateItem
@@ -59,8 +66,20 @@ const CreateNewItemStore = ({
   }, [(newDataField || []).length]);
 
   useEffect(() => {
-    setDefaultData(dataItem);
-  }, [operation === 'update']);
+    if (operation === "update") {
+      
+      let newDataItem = dataItem
+      console.log('dataItem: ',dataItem)
+      if(fieldIdDateTime){
+        newDataItem = {...newDataItem, [fieldIdDateTime]: moment(dataItem[fieldIdDateTime])}
+      }
+      else {
+        newDataItem= dataItem
+      }
+      console.log('22222; ',newDataItem)
+      setDefaultData(newDataItem);
+    }
+  }, []);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -80,44 +99,46 @@ const CreateNewItemStore = ({
       item: values,
     };
 
-    let arrValues = Object.entries(values || {})
+    let arrValues = Object.entries(values || {});
 
     arrValues = (arrValues || []).map((e: any) => {
-        return e.reduce((a: any, v: any) => {return {id: a, value: v}})
-    })
-    
+      return e.reduce((a: any, v: any) => {
+        return { id: a, value: v };
+      });
+    });
+
     let bodyUpdate = {
-        changes: arrValues,
-        return_item_result: true,
-        rev_no: parseInt(rev_no)
-    }
+      changes: arrValues,
+      return_item_result: true,
+      rev_no: parseInt(rev_no),
+    };
     dispatch(
-        operation === 'update' ? actionUpdateItem(
-        bodyUpdate,
-        appId,
-        storeId,
-        itemId,
-        handleCancel,
-        handleGetListStore
-      )
-      :
-      actionCreateNewItem(
-        body,
-        appId,
-        storeId,
-        handleCancel,
-        handleGetListStore
-      )
+      operation === "update"
+        ? actionUpdateItem(
+            bodyUpdate,
+            appId,
+            storeId,
+            itemId,
+            handleCancel,
+            handleGetListStore
+          )
+        : actionCreateNewItem(
+            body,
+            appId,
+            storeId,
+            handleCancel,
+            handleGetListStore
+          )
     );
   };
 
   return (
     <>
-      <Button type="primary" onClick={showModal}>
-        {operation === 'update' ? "Update" : "New"}
+      <Button type="primary" onClick={showModal} style={{marginTop: 5, marginRight: 10}}>
+        {operation === "update" ? "Update" : "New"}
       </Button>
       <Modal
-        title="Add New Workspaces"
+        title={operation === "update" ? "Update item" : "Add new item"}
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -145,15 +166,16 @@ const CreateNewItemStore = ({
                   optionFilterProp="children"
                 >
                   {(e.options || []).map((k: any, j: number) => (
-                    <Option key={j} value={k.option_id}>{k.value}</Option>
+                    <Option key={j} value={k.option_id}>
+                      {k.value}
+                    </Option>
                   ))}
                 </Select>
               </Form.Item>
             ) : (
               <Form.Item label={e.name} name={e.field_id} key={i}>
-                {/* <DatePicker /> */}
-                <Input placeholder={e.name} />
-              </Form.Item>
+                <DatePicker format={dateFormat}/>
+               </Form.Item>
             );
           })}
 

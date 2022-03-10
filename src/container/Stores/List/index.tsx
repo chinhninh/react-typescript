@@ -12,6 +12,7 @@ import HeaderContent from "../../../props/HeaderContent";
 import { useLocation, useNavigate } from "react-router-dom";
 import { APPLICATION_STORES_LIST_PATH } from "../../../routers/path";
 import CreateNewItemStore from "./ModalCreateNew";
+import moment from 'moment'
 
 const StoresListPage = () => {
   const navigate = useNavigate();
@@ -62,6 +63,11 @@ const StoresListPage = () => {
     dispatch(actionDeleteStores(appId, storeId, itemId));
   };
 
+
+  let dateInDataField = (Object.values(dataField || {}) || []).filter((e: any) => e.dataType === 'datetime') as any
+
+  let fieldIdDateTime = dateInDataField && dateInDataField.length && dateInDataField[0].field_id
+
   let newColumns = [] as any;
   try {
     if (dataField) {
@@ -94,6 +100,7 @@ const StoresListPage = () => {
                       dataItem={val}
                       itemId={record}
                       rev_no={val.rev_no}
+                      fieldIdDateTime={fieldIdDateTime}
                     />
                   ) : (
                     <Button
@@ -144,6 +151,7 @@ const StoresListPage = () => {
             dataItem={{}}
             itemId=""
             rev_no=""
+            fieldIdDateTime=""
           />
         }
       />
