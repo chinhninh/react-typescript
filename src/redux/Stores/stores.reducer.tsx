@@ -17,6 +17,12 @@ import {
   STORES_CREATE_ITEM_FAIL,
   STORES_CREATE_ITEM_SUCCESS,
   STORES_CREATE_ITEM_START,
+  STORES_GET_STATUS_SUCCESS,
+  STORES_GET_STATUS_FAIL,
+  STORES_GET_STATUS_START,
+  STORES_GET_DETAIL_ITEM_FAIL,
+  STORES_GET_DETAIL_ITEM_SUCCESS,
+  STORES_GET_DETAIL_ITEM_START,
 } from "./stores.types";
 
 const INITIAL_STATE = {
@@ -42,6 +48,14 @@ const INITIAL_STATE = {
 
   loadingCreateItem: false,
   errorCreateItem: null,
+
+  loadingStatus: false,
+  dataStatus: [],
+  errorStatus: null,
+
+  loadingDetail: false,
+  dataDetail: null,
+  errorDetail: null,
 };
 
 const reducer = (state = INITIAL_STATE, action: any) => {
@@ -176,6 +190,50 @@ const reducer = (state = INITIAL_STATE, action: any) => {
         ...state,
         loadingCreateItem: false,
         errorCreateItem: action.payload,
+      };
+
+      //get list
+    case STORES_GET_STATUS_START:
+      return {
+        ...state,
+        loadingStatus: true,
+      };
+
+    case STORES_GET_STATUS_SUCCESS:
+      return {
+        ...state,
+        loadingStatus: false,
+        dataStatus: action?.payload,
+      };
+
+    case STORES_GET_STATUS_FAIL:
+      return {
+        ...state,
+        loadingStatus: false,
+        dataStatus: [],
+        errorStatus: action.payload,
+      };
+
+       //get detail item
+    case STORES_GET_DETAIL_ITEM_START:
+      return {
+        ...state,
+        loadingStatus: true,
+      };
+
+    case STORES_GET_DETAIL_ITEM_SUCCESS:
+      return {
+        ...state,
+        loadingDetail: false,
+        dataDetail: action?.payload,
+      };
+
+    case STORES_GET_DETAIL_ITEM_FAIL:
+      return {
+        ...state,
+        loadingDetail: false,
+        dataDetail: null,
+        errorDetail: action.payload,
       };
 
     default:

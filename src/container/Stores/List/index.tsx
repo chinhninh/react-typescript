@@ -6,6 +6,8 @@ import {
   actionGetDataStoresField,
   actionDeleteStores,
   actionGetAction,
+  actionGetStatus,
+  actionGetDetailItem,
 } from "../../../redux/Stores/stores.actions";
 import { RootState } from "../../../redux/store";
 import HeaderContent from "../../../props/HeaderContent";
@@ -43,6 +45,10 @@ const StoresListPage = () => {
     (state) => state.storesReducer?.dataAction
   ) as any;
 
+  const dataDetailItem = useSelector<RootState>(
+    (state) => state.storesReducer?.dataDetail
+  ) as any;
+
   useEffect(() => {
     if (appId && storeId) {
       dispatch(actionGetDataStoresField(appId, storeId));
@@ -63,6 +69,10 @@ const StoresListPage = () => {
     dispatch(actionDeleteStores(appId, storeId, itemId));
   };
 
+  const handleGetDetailItem = (itemId: string) => {
+    dispatch(actionGetDetailItem(appId, storeId, itemId));
+  };
+
 
   let dateInDataField = (Object.values(dataField || {}) || []).filter((e: any) => e.dataType === 'datetime') as any
 
@@ -76,7 +86,7 @@ const StoresListPage = () => {
           title: e.name,
           dataIndex: e.field_id,
           key: e.field_id,
-          width: "18%",
+          width: "14%",
         };
       });
 
@@ -101,6 +111,8 @@ const StoresListPage = () => {
                       itemId={record}
                       rev_no={val.rev_no}
                       fieldIdDateTime={fieldIdDateTime}
+                      handleGetDetailItem={handleGetDetailItem}
+                      dataDetailItem={dataDetailItem}
                     />
                   ) : (
                     <Button
@@ -126,8 +138,6 @@ const StoresListPage = () => {
                 })}
               </div>
             );
-
-            // <Button loading={(itemIdDelete === record) && loadingDelete} type="primary" danger onClick={() => handleDelete(appId, storeId, record)}>Delete</Button>
           },
         },
       ]);
@@ -152,6 +162,7 @@ const StoresListPage = () => {
             itemId=""
             rev_no=""
             fieldIdDateTime=""
+            handleGetDetailItem={handleGetDetailItem}
           />
         }
       />

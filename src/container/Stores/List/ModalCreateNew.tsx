@@ -7,11 +7,11 @@ import {
   actionUpdateItem,
 } from "../../../redux/Stores/stores.actions";
 import { RootState } from "../../../redux/store";
-import moment from 'moment';
+import moment from "moment";
 
 const { Option } = Select;
 
-const dateFormat = 'YYYY/MM/DD';
+const dateFormat = "YYYY/MM/DD";
 interface paramCreateNewItem {
   dataField: any;
   appId: string;
@@ -22,6 +22,8 @@ interface paramCreateNewItem {
   itemId: string;
   rev_no: string;
   fieldIdDateTime: string;
+  handleGetDetailItem: (itemId: string) => void;
+  dataDetailItem?: any;
 }
 
 const CreateNewItemStore = ({
@@ -33,12 +35,31 @@ const CreateNewItemStore = ({
   dataItem,
   itemId,
   rev_no,
-  fieldIdDateTime
+  fieldIdDateTime,
+  handleGetDetailItem,
+  dataDetailItem,
 }: paramCreateNewItem) => {
   const dispatch = useDispatch();
 
+  try {
+    const newFieldStatus =
+      dataDetailItem &&
+      dataDetailItem.field_values &&
+      dataDetailItem.field_values.length &&
+      (dataDetailItem.field_values || []).filter(
+        (e: any) => e.dataType === "status"
+      );
+
+    var valueStatus = newFieldStatus.length > 0 && newFieldStatus[0].value;
+  } catch (error) {
+    console.log(error);
+  }
+
   let newDataField = (Object.values(dataField || {}) || []).filter(
-    (e: any) => e.dataType === "text" || e.dataType === "select" || e.dataType === "datetime"
+    (e: any) =>
+      e.dataType === "text" ||
+      e.dataType === "select" ||
+      e.dataType === "datetime"
   ) as any;
 
   let defaultDataFormDataField = {} as any;
@@ -55,7 +76,6 @@ const CreateNewItemStore = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [defaultData, setDefaultData] = useState({});
-  // console.log('defaultData: ',defaultData)
 
   const loading = useSelector<RootState>(
     (state) => state.storesReducer?.loadingCreateItem
@@ -67,22 +87,24 @@ const CreateNewItemStore = ({
 
   useEffect(() => {
     if (operation === "update") {
-      
-      let newDataItem = dataItem
-      console.log('dataItem: ',dataItem)
-      if(fieldIdDateTime){
-        newDataItem = {...newDataItem, [fieldIdDateTime]: moment(dataItem[fieldIdDateTime])}
+      let newDataItem = dataItem;
+      if (fieldIdDateTime) {
+        newDataItem = {
+          ...newDataItem,
+          [fieldIdDateTime]: moment(dataItem[fieldIdDateTime]),
+        };
+      } else {
+        newDataItem = dataItem;
       }
-      else {
-        newDataItem= dataItem
-      }
-      console.log('22222; ',newDataItem)
       setDefaultData(newDataItem);
     }
   }, []);
 
   const showModal = () => {
     setIsModalVisible(true);
+    if (operation === "update") {
+      handleGetDetailItem(itemId);
+    }
   };
 
   const handleOk = () => {
@@ -99,7 +121,7 @@ const CreateNewItemStore = ({
       item: values,
     };
 
-    let arrValues = Object.entries(values || {});
+    let arrValues = Object.entries(values || {}) as any;
 
     arrValues = (arrValues || []).map((e: any) => {
       return e.reduce((a: any, v: any) => {
@@ -132,9 +154,33 @@ const CreateNewItemStore = ({
     );
   };
 
+  const onChangeStatus = (actionId: string) => {
+    let bodyUpdate = {
+      action_id: actionId,
+      changes: [],
+      return_item_result: true,
+      rev_no: parseInt(rev_no),
+    };
+
+    dispatch(
+      actionUpdateItem(
+        bodyUpdate,
+        appId,
+        storeId,
+        itemId,
+        handleCancel,
+        handleGetListStore
+      )
+    );
+  };
+
   return (
     <>
-      <Button type="primary" onClick={showModal} style={{marginTop: 5, marginRight: 10}}>
+      <Button
+        type="primary"
+        onClick={showModal}
+        style={{ marginTop: 5, marginRight: 10 }}
+      >
         {operation === "update" ? "Update" : "New"}
       </Button>
       <Modal
@@ -174,8 +220,8 @@ const CreateNewItemStore = ({
               </Form.Item>
             ) : (
               <Form.Item label={e.name} name={e.field_id} key={i}>
-                <DatePicker format={dateFormat}/>
-               </Form.Item>
+                <DatePicker format={dateFormat} />
+              </Form.Item>
             );
           })}
 
@@ -186,10 +232,45 @@ const CreateNewItemStore = ({
               disabled={loading ? true : false}
               loading={loading ? true : false}
             >
-              Submit
+              {operation === "update" ? "Update" : "Create New"}
             </Button>
           </Form.Item>
         </Form>
+
+        {operation === "update" &&
+          dataDetailItem &&
+          dataDetailItem.status_list &&
+          dataDetailItem.status_list.length &&
+          (dataDetailItem.status_list || []).map((e: any, i: number) => (
+            <div key={i} style={{ display: "inline-block" }}>
+              <span
+                style={
+                  valueStatus === e.status_id
+                    ? { color: "black", fontWeight: "bold" }
+                    : {}
+                }
+              >
+                {e.status_name}
+              </span>{" "}
+              <span style={{ marginLeft: 10, marginRight: 10 }}>
+                {(dataDetailItem.status_list || []).length - 1 !== i
+                  ? ">>"
+                  : ""}
+              </span>
+            </div>
+          ))}
+
+        {operation === "update" &&
+          dataDetailItem &&
+          dataDetailItem.status_actions &&
+          dataDetailItem.status_actions.length &&
+          (dataDetailItem.status_actions || []).map((e: any, i: number) => (
+            <div key={i} style={{ display: "inline-block", marginTop: 10 }}>
+              <Button loading={loading ? true : false} type="primary" style={{ marginRight: 10 }} onClick={() => onChangeStatus(e.action_id)}>
+                {e.action_name}
+              </Button>
+            </div>
+          ))}
       </Modal>
     </>
   );

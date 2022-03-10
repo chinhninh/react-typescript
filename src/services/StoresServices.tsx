@@ -21,6 +21,12 @@ const StoresCreateItem = (body: any, appId: string, storesId: string) => {
 const StoresUpdateItem = (body: any, appId: string, storesId: string, itemId: string) => {
   return http.post(`applications/${appId}/datastores/${storesId}/items/edit/${itemId}`, body);
 };
+const StoreGetStatus = (storesId: string) => {
+  return http.get(`datastores/${storesId}/statuses`);
+};
+const StoreGetDetailItem = (appId: string, storesId: string, itemId: string) => {
+  return http.get(`applications/${appId}/datastores/${storesId}/items/details/${itemId}`);
+};
 const StoresServices = {
   StoresData,
   StoresDataList,
@@ -28,6 +34,8 @@ const StoresServices = {
   StoresDelete,
   StoreGetAction,
   StoresCreateItem,
-  StoresUpdateItem
+  StoresUpdateItem,
+  StoreGetStatus,
+  StoreGetDetailItem
 };
 export default StoresServices;

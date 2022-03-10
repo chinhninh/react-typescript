@@ -17,6 +17,12 @@ import {
   STORES_CREATE_ITEM_START,
   STORES_CREATE_ITEM_SUCCESS,
   STORES_CREATE_ITEM_FAIL,
+  STORES_GET_STATUS_START,
+  STORES_GET_STATUS_SUCCESS,
+  STORES_GET_STATUS_FAIL,
+  STORES_GET_DETAIL_ITEM_FAIL,
+  STORES_GET_DETAIL_ITEM_SUCCESS,
+  STORES_GET_DETAIL_ITEM_START,
 } from "./stores.types";
 
 import StoresServices from "../../services/StoresServices";
@@ -117,6 +123,30 @@ const actionUpdateItem = (body: any, appId: string, storesId: string, itemId: st
     });
 };
 
+const actionGetStatus = (storesId: string) => (dispatch: any) => {
+  dispatch({ type: STORES_GET_STATUS_START });
+  StoresServices.StoreGetStatus(storesId)
+    .then((res: any) => {
+      dispatch({ type: STORES_GET_STATUS_SUCCESS, payload: res?.data});
+    })
+    .catch((e: any) => {
+      configError(e?.response);
+      dispatch({ type: STORES_GET_STATUS_FAIL, payload: e });
+    });
+};
+
+const actionGetDetailItem = (appId: string, storesId: string, itemId: string) => (dispatch: any) => {
+  dispatch({ type: STORES_GET_DETAIL_ITEM_START });
+  StoresServices.StoreGetDetailItem(appId, storesId, itemId)
+    .then((res: any) => {
+      dispatch({ type: STORES_GET_DETAIL_ITEM_SUCCESS, payload: res?.data});
+    })
+    .catch((e: any) => {
+      configError(e?.response);
+      dispatch({ type: STORES_GET_DETAIL_ITEM_FAIL, payload: e });
+    });
+};
+
 export {
   actionGetDataStores,
   actionGetDataListStores,
@@ -124,5 +154,7 @@ export {
   actionDeleteStores,
   actionGetAction,
   actionCreateNewItem,
-  actionUpdateItem
+  actionUpdateItem,
+  actionGetStatus,
+  actionGetDetailItem
 };
